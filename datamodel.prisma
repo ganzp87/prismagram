@@ -1,5 +1,6 @@
 type User {
   id: ID! @id
+  avatar: String
   username: String! @unique
   email: String! @unique
   firstName: String @default(value: "")
@@ -7,46 +8,58 @@ type User {
   bio: String
   following: [User!]! @relation(name: "FollowRelation")
   followers: [User!]! @relation(name: "FollowRelation")
-  posts: [Post!]!
-  likes: [Like!]!
-  comments: [Comment!]!
-  rooms: [Room!]!
+  posts: [Post!]! @relation(name: "UserToPost" onDelete : CASCADE)
+  likes: [Like!]! @relation(name: "UserToLike" onDelete : CASCADE)
+  comments: [Comment!]! @relation(name: "UserToComment" onDelete : CASCADE)
+  rooms: [Room!]! @relation(name: "UserToRoom" onDelete : CASCADE)
   loginSecret: String
+  createdAt: DateTime @createdAt
+  updatedAt: DateTime @updatedAt
 }
 
 type Post {
   id: ID! @id
   location: String
   caption: String!
-  user: User!
-  files: [File!]!
-  likes: [Like!]!
-  comments: [Comment!]!
+  user: User! @relation(name: "UserToPost")
+  files: [File!]! @relation(name: "PostToFile" onDelete : CASCADE)
+  likes: [Like!]! @relation(name: "PostToLike" onDelete : CASCADE)
+  comments: [Comment!]! @relation(name: "PostToComment" onDelete : CASCADE)
+  createdAt: DateTime @createdAt
+  updatedAt: DateTime @updatedAt
 }
 
 type Like {
   id: ID! @id
-  user: User!
-  post: Post!
+  user: User @relation(name: "UserToLike")
+  post: Post @relation(name: "PostToLike")
+  createdAt: DateTime @createdAt
+  updatedAt: DateTime @updatedAt
 }
 
 type Comment {
   id: ID! @id
   text: String!
-  user: User!
-  post: Post!
+  user: User @relation(name: "UserToComment")
+  post: Post @relation(name: "PostToComment")
+  createdAt: DateTime @createdAt
+  updatedAt: DateTime @updatedAt
 }
 
 type File {
   id: ID! @id
   url: String!
-  post: Post!
+  post: Post @relation(name: "PostToFile")
+  createdAt: DateTime @createdAt
+  updatedAt: DateTime @updatedAt
 }
 
 type Room{
   id: ID! @id
-  participants: [User!]!
-  messages: [Message!]!
+  participants: [User!] @relation(name: "UserToRoom")
+  messages: [Message!] @relation(name: "RoomToMessage" onDelete : CASCADE)
+  createdAt: DateTime @createdAt
+  updatedAt: DateTime @updatedAt
 }
 
 type Message{
@@ -54,5 +67,7 @@ type Message{
   text: String!
   from: User! @relation(name: "From")
   to: User! @relation(name: "To")
-  room: Room!
+  room: Room! @relation(name: "RoomToMessage")
+  createdAt: DateTime @createdAt
+  updatedAt: DateTime @updatedAt
 }
