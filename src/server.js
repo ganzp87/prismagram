@@ -1,16 +1,23 @@
 import "./env"
-import { GraphQLServer } from "graphql-yoga"
+import "./passport"
 import logger from "morgan"
 import schema from "./schema"
+import { GraphQLServer } from "graphql-yoga"
 import { authenticateJwt } from "./passport"
-import "./passport"
 import { isAuthenticated } from "./middlewares"
 
 const PORT = process.env.PORT || 4000
 
 const server = new GraphQLServer({
 	schema,
-	context: ({ request }) => ({ request, isAuthenticated })
+	context: (req) => {
+		const { connection: { context = null } = {} } = req
+		return {
+			request: req.request,
+			isAuthenticated,
+			context
+		}
+	}
 })
 
 server.express.use(logger("dev"))

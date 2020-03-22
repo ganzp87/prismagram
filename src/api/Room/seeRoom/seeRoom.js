@@ -1,5 +1,4 @@
 import { prisma } from "../../../../generated/prisma-client"
-import { ROOM_FRAGMENT, MESSAGE_FRAGMENT } from "../../../fragments"
 
 export default {
 	Query: {
@@ -12,18 +11,15 @@ export default {
 				}
 			})
 			if (canSee) {
-				const room = prisma
-					.room({
-						id
-					})
-					.$fragment(ROOM_FRAGMENT)
+				const room = prisma.room({
+					id
+				})
 
 				const messages = prisma
 					.room({
 						id
 					})
 					.messages()
-					.$fragment(MESSAGE_FRAGMENT)
 				return {
 					room,
 					messages
