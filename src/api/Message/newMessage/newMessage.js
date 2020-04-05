@@ -5,7 +5,7 @@ export default {
 		newMessage: {
 			subscribe: (_, args, context) => {
 				// console.log(context)
-				const { roomId, toId } = args
+				const { roomId, email } = args
 				return prisma.$subscribe
 					.message({
 						AND: [
@@ -14,15 +14,15 @@ export default {
 								node: {
 									AND: [
 										{ room: { id: roomId } },
-										{ to: { id: toId } }
-									]
-								}
-							}
-						]
+										{ to: { email: email } },
+									],
+								},
+							},
+						],
 					})
 					.node()
 			},
-			resolve: (payload) => payload
-		}
-	}
+			resolve: (payload) => payload,
+		},
+	},
 }

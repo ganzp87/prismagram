@@ -10,7 +10,10 @@ export default {
 			const { id: parentId } = parent
 			try {
 				return prisma.$exists.user({
-					AND: [{ id: parentId }, { followers_some: { id: user.id } }]
+					AND: [
+						{ id: parentId },
+						{ followers_some: { id: user.id } },
+					],
 				})
 			} catch (error) {
 				console.log(error)
@@ -39,6 +42,6 @@ export default {
 			return posts.length
 		},
 		comments: ({ id }) => prisma.user({ id }).comments(),
-		rooms: ({ id }) => prisma.user({ id }).rooms()
-	}
+		rooms: ({ id }) => prisma.user({ id }).rooms(),
+	},
 }

@@ -16,11 +16,11 @@ const server = new GraphQLServer({
 		return {
 			request: req.request,
 			isAuthenticated,
-			context
+			context,
 		}
-	}
+	},
 })
-
+console.log(process.env["PRISMA_ENDPOINT"])
 server.express.use(logger("dev"))
 
 // jwt를 만드는 경로를 보호??
