@@ -20,7 +20,7 @@ const server = new GraphQLServer({
 		}
 	},
 })
-console.log(process.env["PRISMA_ENDPOINT"])
+// console.log(process.env["PRISMA_ENDPOINT"])
 server.express.use(logger("dev"))
 
 // jwt를 만드는 경로를 보호??

@@ -1,4 +1,5 @@
 import { prisma } from "../../../../generated/prisma-client"
+import axios from "axios"
 
 export default {
 	Mutation: {
@@ -6,6 +7,15 @@ export default {
 			isAuthenticated(request)
 			const { roomId, text, toId } = args
 			const { user } = request
+			const { data } = await axios.post(
+				"https://exp.host/--/api/v2/push/send",
+				{
+					to: "ExponentPushToken[sAj6CfOeifkdcTm6N9yTJf]",
+					title: "New message!",
+					body: text,
+				}
+			)
+			console.log(data)
 			let room
 			if (roomId === undefined) {
 				if (user.id !== toId) {
@@ -13,11 +23,11 @@ export default {
 						participants: {
 							connect: [
 								{
-									id: toId
+									id: toId,
 								},
-								{ id: user.id }
-							]
-						}
+								{ id: user.id },
+							],
+						},
 					})
 				} else {
 					return Error("You can't send a message to yourself")
@@ -37,15 +47,16 @@ export default {
 			return prisma.createMessage({
 				text,
 				from: {
-					connect: { id: user.id }
+					connect: { id: user.id },
 				},
 				to: {
-					connect: { id: roomId ? getTo.id : toId }
+					connect: { id: roomId ? getTo.id : toId },
 				},
 				room: {
-					connect: { id: room.id }
-				}
+					connect: { id: room.id },
+				},
+				isRead: false,
 			})
-		}
-	}
+		},
+	},
 }

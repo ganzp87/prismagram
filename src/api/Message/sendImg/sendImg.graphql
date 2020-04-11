@@ -1,0 +1,3 @@
+type Mutation {
+	sendImg(roomId: String, toId: String, url: String!): Message!
+}
