@@ -13,6 +13,7 @@ type User {
   comments: [Comment!]! @relation(name: "UserToComment" onDelete : CASCADE)
   rooms: [Room!]! @relation(name: "UserToRoom" onDelete : CASCADE)
   loginSecret: String
+  pushToken: String
   createdAt: DateTime @createdAt
   updatedAt: DateTime @updatedAt
 }

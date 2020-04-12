@@ -12,7 +12,7 @@ export default {
 				{
 					to: "ExponentPushToken[sAj6CfOeifkdcTm6N9yTJf]",
 					title: "New message!",
-					body: text,
+					body: text
 				}
 			)
 			console.log(data)
@@ -23,11 +23,11 @@ export default {
 						participants: {
 							connect: [
 								{
-									id: toId,
+									id: toId
 								},
-								{ id: user.id },
-							],
-						},
+								{ id: user.id }
+							]
+						}
 					})
 				} else {
 					return Error("You can't send a message to yourself")
@@ -42,21 +42,22 @@ export default {
 				.room({ id: room.id })
 				.participants()
 			const getTo = participant.filter(
-				(participant) => participant.id !== user.id
+				participant => participant.id !== user.id
 			)[0]
 			return prisma.createMessage({
 				text,
 				from: {
-					connect: { id: user.id },
+					connect: { id: user.id }
 				},
 				to: {
-					connect: { id: roomId ? getTo.id : toId },
+					connect: { id: roomId ? getTo.id : toId }
 				},
 				room: {
-					connect: { id: room.id },
+					connect: { id: room.id }
 				},
 				isRead: false,
+				file: null
 			})
-		},
-	},
+		}
+	}
 }

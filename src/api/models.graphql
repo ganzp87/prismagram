@@ -19,6 +19,7 @@ type User {
 	comments: [Comment!]!
 	rooms: [Room!]!
 	loginSecret: String
+	pushToken: String
 	createdAt: String
 	updatedAt: String
 }

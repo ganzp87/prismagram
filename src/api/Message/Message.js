@@ -5,5 +5,6 @@ export default {
 		to: ({ id }) => prisma.message({ id }).to(),
 		from: ({ id }) => prisma.message({ id }).from(),
 		room: ({ id }) => prisma.message({ id }).room(),
-	},
+		file: ({ id }) => prisma.message({ id }).file()
+	}
 }
