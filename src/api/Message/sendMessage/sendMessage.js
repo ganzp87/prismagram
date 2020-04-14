@@ -7,15 +7,20 @@ export default {
 			isAuthenticated(request)
 			const { roomId, text, toId } = args
 			const { user } = request
-			const { data } = await axios.post(
-				"https://exp.host/--/api/v2/push/send",
-				{
-					to: "ExponentPushToken[sAj6CfOeifkdcTm6N9yTJf]",
-					title: "New message!",
-					body: text
-				}
-			)
-			console.log(data)
+			try {
+				const pushToken = await prisma.user({ id: toId }).pushToken()
+				const { data } = await axios.post(
+					"https://exp.host/--/api/v2/push/send",
+					{
+						to: pushToken,
+						title: "새로운 메세지가 도착하였습니다!",
+						body: text
+					}
+				)
+				console.log(data)
+			} catch (error) {
+				console.log("PushToken이 없습니다.")
+			}
 			let room
 			if (roomId === undefined) {
 				if (user.id !== toId) {

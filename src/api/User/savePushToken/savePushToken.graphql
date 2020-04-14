@@ -1,0 +1,3 @@
+type Mutation {
+	savePushToken(email: String!, pushToken: String!): User!
+}

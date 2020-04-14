@@ -8,25 +8,25 @@ export default {
 			const isRead = true
 			try {
 				const messages = await prisma.messages({
-					where: { AND: { room: { id: roomId }, to: { email } } },
+					where: { AND: { room: { id: roomId }, to: { email } } }
 				})
 				if (messages) {
 					messages.map(
-						async (m) =>
+						async m =>
 							// console.log(m),
 							await prisma.updateMessage({
 								where: { id: m.id },
-								data: { isRead },
+								data: { isRead }
 							})
 					)
-					// console.log(message)
-					return true
+					console.log("ok")
+					return messages
 				} else {
-					throw Error(false)
+					throw Error("Error")
 				}
 			} catch (error) {
 				throw Error(error)
 			}
-		},
-	},
+		}
+	}
 }

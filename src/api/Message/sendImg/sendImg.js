@@ -1,4 +1,5 @@
 import { prisma } from "../../../../generated/prisma-client"
+import axios from "axios"
 
 export default {
 	Mutation: {
@@ -9,6 +10,7 @@ export default {
 			const file = await prisma.createFile({
 				url
 			})
+			const pushToken = await prisma.user({ id: toId }).pushToken()
 			const message = await prisma.createMessage({
 				file: { connect: { id: file.id } },
 				from: { connect: { id: user.id } },
@@ -16,8 +18,21 @@ export default {
 				room: { connect: { id: roomId } },
 				isRead: false
 			})
-			console.log(file)
-			return message
+			try {
+				const { data } = await axios.post(
+					"https://exp.host/--/api/v2/push/send",
+					{
+						to: pushToken,
+						title: "새로운 메세지가 도착하였습니다!",
+						body: "사진"
+					}
+				)
+				console.log(data)
+				console.log(file)
+				return message
+			} catch (error) {
+				throw Error(error)
+			}
 		}
 	}
 }
