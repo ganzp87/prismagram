@@ -66,6 +66,9 @@ type File {
 
 type Room {
 	id: ID!
+	title: String
+	isGroup: Boolean
+	avatar: String
 	participants: [User!]!
 	messages: [Message!]!
 	createdAt: String
@@ -77,9 +80,21 @@ type Message {
 	text: String
 	file: File
 	from: User!
-	to: User!
+	to: User
 	room: Room!
 	isRead: Boolean!
+	createdAt: String
+	updatedAt: String
+}
+
+type GroupMessage {
+	id: ID!
+	text: String
+	file: File
+	from: User!
+	to: [User!]!
+	room: Room!
+	isRead: [User!]!
 	createdAt: String
 	updatedAt: String
 }

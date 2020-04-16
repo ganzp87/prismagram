@@ -7,26 +7,26 @@ export default {
 			const { id } = args
 			const canSee = await prisma.$exists.room({
 				participants_some: {
-					id: request.user.id
-				}
+					id: request.user.id,
+				},
 			})
 			if (canSee) {
 				const room = prisma.room({
-					id
+					id,
 				})
 
 				const messages = prisma
 					.room({
-						id
+						id,
 					})
 					.messages()
 				return {
 					room,
-					messages
+					messages,
 				}
 			} else {
 				throw Error("You can't see this room")
 			}
-		}
-	}
+		},
+	},
 }

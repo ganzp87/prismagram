@@ -1,5 +1,6 @@
 import { prisma } from "../../../../generated/prisma-client"
 import axios from "axios"
+import { sendPush } from "../../../utils"
 
 export default {
 	Mutation: {
@@ -7,17 +8,37 @@ export default {
 			isAuthenticated(request)
 			const { roomId, text, toId } = args
 			const { user } = request
+			let groupMemberList
 			try {
-				const pushToken = await prisma.user({ id: toId }).pushToken()
-				const { data } = await axios.post(
-					"https://exp.host/--/api/v2/push/send",
-					{
-						to: pushToken,
-						title: "새로운 메세지가 도착하였습니다!",
-						body: text
-					}
-				)
-				console.log(data)
+				// 단체 대화방
+				if (toId === undefined) {
+					groupMemberList = await prisma.users({
+						where: { rooms_some: roomId },
+					})
+					groupMemberList.map(async (m) => {
+						sendPush(m.pushToken)
+					})
+					room = await prisma.room({ id: roomId })
+					return prisma.createGroupMessage({
+						text,
+						from: {
+							connect: { id: user.id },
+						},
+						to: {
+							connect: [...groupMemberList],
+						},
+						room: {
+							connect: { id: room.id },
+						},
+						isRead: false,
+						file: null,
+					})
+				} else {
+					const pushToken = await prisma
+						.user({ id: toId })
+						.pushToken()
+					sendPush(pushToken)
+				}
 			} catch (error) {
 				console.log("PushToken이 없습니다.")
 			}
@@ -28,11 +49,11 @@ export default {
 						participants: {
 							connect: [
 								{
-									id: toId
+									id: toId,
 								},
-								{ id: user.id }
-							]
-						}
+								{ id: user.id },
+							],
+						},
 					})
 				} else {
 					return Error("You can't send a message to yourself")
@@ -47,22 +68,22 @@ export default {
 				.room({ id: room.id })
 				.participants()
 			const getTo = participant.filter(
-				participant => participant.id !== user.id
+				(participant) => participant.id !== user.id
 			)[0]
 			return prisma.createMessage({
 				text,
 				from: {
-					connect: { id: user.id }
+					connect: { id: user.id },
 				},
 				to: {
-					connect: { id: roomId ? getTo.id : toId }
+					connect: { id: roomId ? getTo.id : toId },
 				},
 				room: {
-					connect: { id: room.id }
+					connect: { id: room.id },
 				},
 				isRead: false,
-				file: null
+				file: null,
 			})
-		}
-	}
+		},
+	},
 }

@@ -13,8 +13,8 @@ const sendMail = (email) => {
 	const options = {
 		auth: {
 			api_key: process.env.MAILGUN_API,
-			domain: process.env.MAILGUN_DOMAIN
-		}
+			domain: process.env.MAILGUN_DOMAIN,
+		},
 	}
 	const client = nodeMailer.createTransport(mn(options))
 	return client.sendMail(email)
@@ -25,9 +25,18 @@ export const sendSecretMail = (address, secret) => {
 		from: "admin@prismagram.co",
 		to: address,
 		subject: "🔒Login Secret for Prismagram🔒",
-		html: `Here is login secret <strong>${secret}</strong> <br/> Please copy and paste this secret to the App!`
+		html: `Here is login secret <strong>${secret}</strong> <br/> Please copy and paste this secret to the App!`,
 	}
 	return sendMail(email)
 }
 
 export const generateToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET)
+
+export const sendPush = async (pushToken, type) => {
+	const { data } = await axios.post("https://exp.host/--/api/v2/push/send", {
+		to: pushToken,
+		title: `(${type})새로운 메세지가 도착하였습니다!`,
+		body: text,
+	})
+	console.log(data)
+}
