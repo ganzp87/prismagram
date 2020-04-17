@@ -1,3 +1,0 @@
-type Mutation {
-	sendGroupMessage(roomId: String, text: String): Message!
-}

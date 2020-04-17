@@ -72,21 +72,9 @@ type Message{
   text: String
   file: File @relation(name: "File")
   from: User! @relation(name: "From")
-  to: User! @relation(name: "To")
+  to: [User!] @relation(name: "To")
   room: Room! @relation(name: "RoomToMessage")
-  isRead: Boolean!
+  isRead: [User!] @relation(name: "UserReadToGroupMessage")
   createdAt: DateTime @createdAt
   updatedAt: DateTime @updatedAt
-}
-
-type GroupMessage {
-	id: ID! @id
-	text: String
-	file: File @relation(name: "GroupFile")
-	from: User! @relation(name: "GroupFrom")
-  to: [User!] @relation(name: "UserToGroupMessage")
-	room: Room! @relation(name: "RoomToGroupMessage")
-	isRead: [User!] @relation(name: "UserReadToGroupMessage")
-	createdAt: DateTime @createdAt
-	updatedAt: DateTime @updatedAt
 }

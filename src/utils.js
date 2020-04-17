@@ -2,6 +2,7 @@ import { adjectives, nouns } from "./words"
 import nodeMailer from "nodemailer"
 import mn from "nodemailer-mailgun-transport"
 import jwt from "jsonwebtoken"
+import axios from "axios"
 
 export const generateSecret = () => {
 	const randomNumber_1 = Math.floor(Math.random() * adjectives.length)
@@ -32,11 +33,13 @@ export const sendSecretMail = (address, secret) => {
 
 export const generateToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET)
 
-export const sendPush = async (pushToken, type) => {
+export const sendPush = async (pushToken, type, title, text) => {
 	const { data } = await axios.post("https://exp.host/--/api/v2/push/send", {
 		to: pushToken,
-		title: `(${type})새로운 메세지가 도착하였습니다!`,
+		title: `(${type})${
+			title !== undefined ? title : "새로운 메세지가 도착하였습니다!"
+		}`,
 		body: text,
 	})
-	console.log(data)
+	console.log("pushToken Success :", data)
 }

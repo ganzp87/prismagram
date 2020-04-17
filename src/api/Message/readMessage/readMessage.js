@@ -5,19 +5,22 @@ export default {
 		readMessage: async (_, args, { request, isAuthenticated }) => {
 			// isAuthenticated(request)
 			const { roomId, email } = args
-			const isRead = true
+			// const isRead = true
 			try {
-				const messages = await prisma.messages({
-					where: { AND: { room: { id: roomId }, to: { email } } }
+				let messages = await prisma.messages({
+					where: {
+						AND: { room: { id: roomId }, to_some: { email } },
+					},
 				})
 				if (messages) {
-					messages.map(
-						async m =>
+					messages = await Promise.all(
+						messages.map((m) =>
 							// console.log(m),
-							await prisma.updateMessage({
+							prisma.updateMessage({
 								where: { id: m.id },
-								data: { isRead }
+								data: { isRead: { disconnect: { email } } },
 							})
+						)
 					)
 					console.log("ok")
 					return messages
@@ -27,6 +30,6 @@ export default {
 			} catch (error) {
 				throw Error(error)
 			}
-		}
-	}
+		},
+	},
 }

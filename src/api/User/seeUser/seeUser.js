@@ -6,6 +6,6 @@ export default {
 			const { username } = args
 			const user = await prisma.user({ username })
 			return user
-		}
-	}
+		},
+	},
 }
